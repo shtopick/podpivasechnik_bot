@@ -1,23 +1,28 @@
 import requests
-from pydantic import BaseModel, Field
+import time
 
 
-class Coordinates(BaseModel):
-    latitude: float
-    longitude: float
+API_URL = 'https://api.telegram.org/bot'
+BOT_TOKEN = '6598248184:AAFz9h0Keo_OrNr33nQjWc7eRrteaOjt_Wk'
+TEXT = 'Пиво льется через край'
+MAX_COUNTER = 100
+
+offset = -2
+counter = 0
+chat_id: int
 
 
-class IssRequest(BaseModel):
-    message: str
-    timestamp: int
-    position: Coordinates = Field(alias='iss_position')
+while counter < MAX_COUNTER:
 
+    print('attempt =', counter)  #Чтобы видеть в консоли, что код живет
 
-api_url = 'http://api.open-notify.org/iss-now.json'
+    updates = requests.get(f'{API_URL}{BOT_TOKEN}/getUpdates?offset={offset + 1}').json()
 
-response = requests.get(api_url)
-if response.status_code == 200:
-    iss = IssRequest.model_validate_json(response.text)
-    print(iss.position)
-else:
-    print(response.status_code)
+    if updates['result']:
+        for result in updates['result']:
+            offset = result['update_id']
+            chat_id = result['message']['from']['id']
+            requests.get(f'{API_URL}{BOT_TOKEN}/sendMessage?chat_id={chat_id}&text={TEXT}')
+
+    time.sleep(1)
+    counter += 1
