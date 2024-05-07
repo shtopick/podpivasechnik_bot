@@ -1,6 +1,6 @@
 import requests
 import time
-
+from pprint import pprint
 
 API_URL = 'https://api.telegram.org/bot'
 BOT_TOKEN = '6598248184:AAFz9h0Keo_OrNr33nQjWc7eRrteaOjt_Wk'
@@ -17,6 +17,8 @@ while counter < MAX_COUNTER:
     print('attempt =', counter)  #Чтобы видеть в консоли, что код живет
 
     updates = requests.get(f'{API_URL}{BOT_TOKEN}/getUpdates?offset={offset + 1}').json()
+
+    pprint(updates)
 
     if updates['result']:
         for result in updates['result']:
