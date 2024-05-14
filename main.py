@@ -34,16 +34,5 @@ async def send_echo(message: Message):
     await message.reply(text=message.text)
 
 
-# Этот хэндлер будет срабатывать на команду "/support"
-@dp.message(Command(commands=['support']))
-async def process_help_command(message: Message):
-    await message.answer(
-            cat_response = requests.get(API_CATS_URL)
-            if cat_response.status_code == 200:
-                cat_link = cat_response.json()[0]['url']
-                requests.get(f'{API_URL}{BOT_TOKEN}/sendPhoto?chat_id={chat_id}&photo={cat_link}')
-        )
-
-
 if __name__ == '__main__':
     dp.run_polling(bot)
